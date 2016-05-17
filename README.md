@@ -7,11 +7,11 @@ validations is a bad idea. It is just an endpoint.
 
 Mount it into your application (Rails or otherwise). Then, send it a request like so:
 
-   POST /?model=User
+    POST /?model=User
 
 with a JSON body of:
    
-   {"name": "John Doe"}
+    {"name": "John Doe"}
 
 `POST` implies you want to check if you are able to create an object.
 The app is going to instantiate a blank User model object, perform `user#attributes = your_attributes` and is going to call
@@ -32,7 +32,9 @@ If it is valid, you the `valid` property in the JSON response will be `true`, an
 To perform a check for a modification, use `PUT` or `PATCH` (`ActiveModel#attributes=` works rather like a `Hash#merge`, not like a
 full-on replace assignment).
 
-   PUT /?model=User&id=123
+    PUT /?model=User&id=123
+
+will give the same response as the POST example, except that `is_create` will be set to `true`.
 
 ## Concerns
 
