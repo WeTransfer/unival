@@ -30,7 +30,8 @@ Gem::Specification.new do |s|
     "lib/unival/version.rb",
     "spec/full_stack_spec.rb",
     "spec/spec_helper.rb",
-    "spec/unival_spec.rb"
+    "spec/unival_spec.rb",
+    "unival.gemspec"
   ]
   s.homepage = "http://github.com/WeTransfer/unival"
   s.licenses = ["MIT"]
@@ -50,7 +51,7 @@ Gem::Specification.new do |s|
       s.add_development_dependency(%q<sqlite3>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 3.4"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_development_dependency(%q<jeweler>, [">= 0"])
+      s.add_development_dependency(%q<jeweler>, ["~> 2.1"])
     else
       s.add_dependency(%q<activemodel>, ["> 3"])
       s.add_dependency(%q<rack>, ["~> 1.4"])
@@ -61,7 +62,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<sqlite3>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 3.4"])
       s.add_dependency(%q<bundler>, ["~> 1.0"])
-      s.add_dependency(%q<jeweler>, [">= 0"])
+      s.add_dependency(%q<jeweler>, ["~> 2.1"])
     end
   else
     s.add_dependency(%q<activemodel>, ["> 3"])
@@ -73,7 +74,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<sqlite3>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 3.4"])
     s.add_dependency(%q<bundler>, ["~> 1.0"])
-    s.add_dependency(%q<jeweler>, [">= 0"])
+    s.add_dependency(%q<jeweler>, ["~> 2.1"])
   end
 end
 

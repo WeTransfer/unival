@@ -19,5 +19,5 @@ group :development do
   gem 'sqlite3'
   gem "rspec", "~> 3.4"
   gem "bundler", "~> 1.0"
-  gem "jeweler"
+  gem "jeweler", '~> 2.1'
 end
