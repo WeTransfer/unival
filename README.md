@@ -54,6 +54,5 @@ from this endpoint by overriding `model_accessible?(model_module)`
 
 ## Copyright
 
-Copyright (c) 2016 Julik Tarkhanov. See LICENSE.txt for
-further details.
+Copyright (c) 2016 WeTransfer. See LICENSE.txt for further details.
 
