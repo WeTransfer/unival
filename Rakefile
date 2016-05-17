@@ -12,8 +12,9 @@ end
 require 'rake'
 
 require 'jeweler'
+require_relative 'lib/unival/version'
 Jeweler::Tasks.new do |gem|
-  gem.version = '1.1.0'
+  gem.version = Unival::VERSION
   # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
   gem.name = "unival"
   gem.homepage = "http://github.com/WeTransfer/unival"
