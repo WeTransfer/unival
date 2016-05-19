@@ -6,7 +6,7 @@ source "http://rubygems.org"
 #   $ BUNDLE_GEMFILE=gemfiles/Gemfile.rails-4.1.x bundle exec rake
 #
 # etc.
-gem 'activemodel', "> 3"
+gem 'activemodel', "~> 3"
 gem 'rack', '~> 1.4'
 
 # Add dependencies to develop your gem here.
