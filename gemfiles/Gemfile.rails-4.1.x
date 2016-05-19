@@ -7,10 +7,11 @@ gem 'rack', '~> 1.4'
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem 'activerecord', "~> 4"
+  gem 'rack-test'
   gem 'rake', '~> 10.0'
+  gem 'yard'
   gem 'sqlite3'
-  gem "rspec", "~> 2.4"
-  gem "rdoc", "~> 3.12"
+  gem "rspec", "~> 3.4"
   gem "bundler", "~> 1.0"
-  gem "jeweler", "1.8.4" # The last without Nokogiri
+  gem "jeweler", '~> 2.1'
 end
