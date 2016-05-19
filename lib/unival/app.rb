@@ -18,7 +18,7 @@ class Unival::App
     query_params = extract_query_or_route_params_from(req)
     
     model_class_name = query_params.delete('model')
-    raise Inv, "No model class given (by default passed as the `model' query-string param)" if model_class.to_s.empty?
+    raise Inv, "No model class given (by default passed as the `model' query-string param)" if model_class_name.to_s.empty?
     
     model_class = Kernel.const_get(model_class_name)
     raise Inv, "Invalid model or model not permitted" unless model_accessible?(model_class)
