@@ -47,10 +47,10 @@ class Unival::App
     
     is_create = req.post?
     if model.valid?
-      d = {model: model_class, is_create: is_create, valid: true, errors: nil}
+      d = {model: model_class.to_s, is_create: is_create, valid: true, errors: nil}
       [200, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
     else
-      d = {model: model_class, is_create: is_create, valid: false, errors: model.errors.as_json}
+      d = {model: model_class.to_s, is_create: is_create, valid: false, errors: model.errors.as_json}
       [409, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
     end
   rescue Exception => e
