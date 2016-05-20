@@ -10,12 +10,7 @@ describe 'Unival full-stack' do
   
   # This is a full-stack speck, so we are going to do real ActiveRecord and stuff.
   before :all do
-    
-    if ActiveRecord::VERSION::MAJOR < 4
-      ActiveRecord::Base.establish_connection(adapter: 'sqlite3', dbfile: ':memory:')
-    else
-      ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
-    end
+    ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
     
     ActiveRecord::Schema.define do
       create_table :people do |t|
