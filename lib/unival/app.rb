@@ -1,9 +1,10 @@
 require 'json'
 
 class Unival::App
+  include Unival::Utils
+  
   SUPPORTED_METHODS = %w( PUT POST PATCH )
   Inv = Class.new(StandardError)
-  
   def call(env)
     req = Rack::Request.new(env)
     
@@ -17,24 +18,27 @@ class Unival::App
     
     query_params = extract_query_or_route_params_from(req)
     
-    model_class_name = query_params.delete('model')
-    raise Inv, "No model class given (by default passed as the `model' query-string param)" if model_class_name.to_s.empty?
+    model_module_name = query_params.delete('model')
+    raise Inv, "No model class given (by default passed as the `model' query-string param)" if model_module_name.to_s.empty?
     
-    model_class = Kernel.const_get(model_class_name)
-    raise Inv, "Invalid model or model not permitted" unless model_accessible?(model_class)
+    model_module = Kernel.const_get(model_module_name)
+    raise Inv, "Invalid model or model not permitted" unless model_accessible?(model_module)
     
     model = if req.post?
-      raise Inv, "The model module does not support .new" unless model_class.respond_to?(:new)
-      model_class.new
+      raise Inv, "The model module does not support .new" unless model_module.respond_to?(:new)
+      model_module.new
     else
       model_id = query_params.delete('id')
       raise Inv, "No model ID to find given (by default passed as the `id' query-string param)" unless model_id
-      raise Inv, "The model module does not support .find" unless model_class.respond_to?(:find)
-      model_class.find(model_id)
+      raise Inv, "The model module does not support .find" unless model_module.respond_to?(:find)
+      model_module.find(model_id)
     end
     
+    # Instead of scanning for instance_methods, check the object itself.
+    raise Inv, "The model (#{model.class}) does not support `#valid?'" unless model.respond_to?(:valid?)
+    
     model_data = if query_params['format'].to_s.downcase == 'jquery'
-      repack_jquery_serialization(model_class_name, params)
+      repack_jquery_serialization(model_module_name, params)
     else
       params
     end
@@ -47,23 +51,22 @@ class Unival::App
     
     is_create = req.post?
     if model.valid?
-      d = {model: model_class.to_s, is_create: is_create, valid: true, errors: nil}
+      d = {model: model_module.to_s, is_create: is_create, valid: true, errors: nil}
       [200, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
     else
-      d = {model: model_class.to_s, is_create: is_create, valid: false, errors: model.errors.as_json}
+      model_errors = replace_with_translation_keys(model.errors)
+      d = {model: model_module.to_s, is_create: is_create, valid: false, errors: model_errors}
       [409, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
     end
   rescue Exception => e
     if e.to_s =~ /NotFound/
       d = {error: "Model not found: #{e}"}
       [404, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
-    elsif e === Inv
+    elsif e.is_a?(Inv)
       d = {error: e.message}
       [400, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
-      []
     else
-      d = {error: e.message}
-      [502, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
+      raise e # Something we can't handle internally, raise it up the stack for eventual exception capture in middleware
     end
   end
 
@@ -73,30 +76,13 @@ class Unival::App
     true
   end
   
-  # Logs the exception for later use
-  def log_exception(e)
-    $stderr.puts e.message
+  def replace_with_translation_keys(model_errors)
+    return model_errors if internationalized?
+    deep_translation_replace(model_errors)
   end
   
   # Extract params like :format, :id and :model
   def extract_query_or_route_params_from(rack_request)
     Rack::Utils.parse_nested_query(rack_request.query_string)
-  end
-
-  # Hackishly use Rack to reconstruct a hash of keys-values, with nesting
-  def repack_jquery_serialization(model_class_name, jquery_array_of_fields)
-    reassembled_query = jquery_array_of_fields.map do |elem|
-      Rack::Utils.escape(elem.fetch('name')) + '=' + Rack::Utils.escape(elem.fetch('value'))
-    end.join('&')
-  
-    param_hash = Rack::Utils.parse_nested_query(reassembled_query)
-  
-    raise "The resulting parametric object must be a Hash" unless param_hash.is_a?(Hash)
-    raise "The resulting parametric object must have 1 key" unless param_hash.keys.one?
-    object_params = param_hash.fetch(param_hash.keys[0])
-
-    raise "The resulting unwrapped object params must be a Hash" unless object_params.is_a?(Hash)
-  
-    return object_params.with_indifferent_access
   end
 end

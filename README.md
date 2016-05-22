@@ -36,6 +36,15 @@ full-on replace assignment).
 
 will give the same response as the POST example, except that `is_create` will be set to `true`.
 
+## Translations
+
+If you have I18n enabled, and you have enabled translation introspection, you will receive the translation keys instead of the
+translated error strings. To set up translation introspection, make sure that the I18n backend you use supports introspection:
+
+    class << I18n.backend
+      include I18n::Backend::Metadata
+    end
+
 ## Concerns
 
 This approach is relatively insecure as it allows for probing. Use something like `Rack::Attack` to limit the number of

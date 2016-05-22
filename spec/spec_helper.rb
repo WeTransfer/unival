@@ -4,5 +4,5 @@ require 'rspec'
 require 'unival'
 
 RSpec.configure do |config|
-  
+  config.order = 'random'
 end

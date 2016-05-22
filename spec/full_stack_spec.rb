@@ -51,8 +51,8 @@ describe 'Unival full-stack' do
     john = Person.create name: 'John', email: 'john@example.com'
     
     post '/?model=Person', JSON.dump({name: 'John', email: 'another-john@example.com'})
-    parsed = JSON.parse(last_response.body, symbolize_names: true)
     
+    parsed = JSON.parse(last_response.body, symbolize_names: true)
     expect(last_response).not_to be_ok
     expect(last_response.status).to eq(409)
     expect(parsed).to eq({
@@ -92,7 +92,7 @@ describe 'Unival full-stack' do
     
     let(:app) { MoreRestrictive.new }
     
-    it 'performs validation in raw JSON format for a new record and returns an error if the saving would cause a duplicate' do
+    it 'performs validation for a model that is permitted, but forbids it for a model that is not' do
       post '/?model=Person', JSON.dump({name: 'John', email: 'john@example.com'})
       expect(last_response).to be_ok
       
