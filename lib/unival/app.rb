@@ -37,11 +37,7 @@ class Unival::App
     # Instead of scanning for instance_methods, check the object itself.
     raise Inv, "The model (#{model.class}) does not support `#valid?'" unless model.respond_to?(:valid?)
     
-    model_data = if query_params['format'].to_s.downcase == 'jquery'
-      repack_jquery_serialization(model_module_name, params)
-    else
-      params
-    end
+    model_data = filter_model_params(model_module, params)
     
     # Instead of scanning for instance_methods, check the object itself.
     raise Inv, "The model does not support `#valid?'" unless model.respond_to?(:valid?)
@@ -76,9 +72,19 @@ class Unival::App
     true
   end
   
+  # Replaces the literal strings in the model errors (furnished as
+  # a json-able Hash with arbitrary nesting) with the I18n keys.
+  # Only gets performed if the translation introspection module is present
+  # on the I18n backend currently in use.
   def replace_with_translation_keys(model_errors)
     return model_errors if internationalized?
     deep_translation_replace(model_errors)
+  end
+  
+  # Can be used to do optional parameter filtering.
+  # If you want to use strong parameters, this is the place to apply them.
+  def filter_model_params(model_module, params)
+    params
   end
   
   # Extract params like :format, :id and :model
