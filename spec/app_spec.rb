@@ -80,6 +80,7 @@ describe 'Unival app' do
       expect(fake_model).to receive(:attributes=)
       expect(fake_model).to receive(:valid?).and_return(false)
       expect(fake_model).to receive(:errors).and_return(fake_errors)
+      expect(fake_errors).to receive(:as_json).and_return(fake_errors)
       
       post '/?model=TranslatedModel', JSON.dump({name: 'Julik', email: 'julik@example.com'})
       

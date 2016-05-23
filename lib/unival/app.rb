@@ -50,7 +50,7 @@ class Unival::App
       d = {model: model_module.to_s, is_create: is_create, valid: true, errors: nil}
       [200, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
     else
-      model_errors = replace_with_translation_keys(model.errors)
+      model_errors = replace_with_translation_keys(model.errors.as_json)
       d = {model: model_module.to_s, is_create: is_create, valid: false, errors: model_errors}
       [409, {'Content-Type' => 'application/json'}, [JSON.dump(d)]]
     end
