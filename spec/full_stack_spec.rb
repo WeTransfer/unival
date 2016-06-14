@@ -3,6 +3,7 @@ require 'rack'
 require 'rack/test'
 require 'active_record'
 require 'sqlite3'
+require 'i18n'
 
 describe 'Unival full-stack' do
   include Rack::Test::Methods
@@ -63,6 +64,25 @@ describe 'Unival full-stack' do
     })
   end
   
+  describe 'When using translation introspection of i18n' do
+    it 'returns translated messages without introspection, and keys when introspection is available' do
+      john = Person.create name: 'John', email: 'john@example.com'
+
+      # Without introspection (translated messages)
+      post '/?model=Person', JSON.dump({name: 'John', email: 'another-john@example.com'})
+      parsed = JSON.parse(last_response.body, symbolize_names: true)
+      expect(parsed.fetch(:errors)).to eq({:name=>["has already been taken"]})
+
+      # Enable the translation metadata module
+      I18n::Backend::Simple.include(I18n::Backend::Metadata)
+
+      # With introspection (translation keys)
+      post '/?model=Person', JSON.dump({name: 'John', email: 'another-john@example.com'})
+      parsed = JSON.parse(last_response.body, symbolize_names: true)
+      expect(parsed.fetch(:errors)).to eq({:name=>["activerecord.errors.models.person.attributes.name.taken"]})
+    end
+  end
+
   it 'performs validation in raw JSON format for a record update via PUT and says it may proceed' do
     john = Person.create name: 'John', email: 'john@example.com'
     
